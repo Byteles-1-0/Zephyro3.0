@@ -1,0 +1,220 @@
+.App {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.control-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-right: 0.25rem;
+  white-space: nowrap;
+}
+
+.controls button {
+  padding: 0.5rem 1rem;
+  border: 2px solid white;
+  background: transparent;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.controls button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.controls button.active {
+  background: white;
+  color: #667eea;
+}
+
+.controls button.refresh {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.radius-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0 0.5rem;
+}
+
+.radius-control label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.radius-control input[type="range"] {
+  width: 100px;
+  height: 4px;
+  cursor: pointer;
+  accent-color: white;
+}
+
+.loading, .error {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  z-index: 1000;
+  font-weight: 500;
+}
+
+.loading {
+  background: #3b82f6;
+  color: white;
+}
+
+.error {
+  background: #ef4444;
+  color: white;
+}
+
+.info-message {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  z-index: 1000;
+  font-weight: 500;
+  background: #3b82f6;
+  color: white;
+}
+
+.legend {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+  min-width: 180px;
+}
+
+.legend h4 {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.3rem 0;
+  font-size: 0.85rem;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.3);
+  opacity: 0.6;
+}
+
+.legend-info {
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.legend-info strong {
+  color: #374151;
+}
+
+.popup-content h3 {
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+  font-size: 1rem;
+}
+
+.popup-content .data-section {
+  margin: 0.75rem 0;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background: #f9fafb;
+}
+
+.popup-content .data-section.daily {
+  border-left: 3px solid #3b82f6;
+}
+
+.popup-content .data-section.realtime {
+  border-left: 3px solid #10b981;
+  background: #f0fdf4;
+}
+
+.popup-content .data-section.hourly {
+  border-left: 3px solid #10b981;
+  background: #f0fdf4;
+}
+
+.popup-content .data-section h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.popup-content p {
+  margin: 0.25rem 0;
+  color: #4b5563;
+}
+
+.popup-content .coverage-info {
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.85rem;
+}
+
+.popup-content small {
+  color: #6b7280;
+}
