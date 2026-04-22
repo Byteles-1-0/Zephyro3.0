@@ -1,0 +1,268 @@
+/* ============================================
+   LAYER TOGGLE PANEL - GLASSMORPHISM STYLING
+   ============================================ */
+.layer-toggle-panel {
+  position: fixed;
+  top: 90px; /* Positioned below SearchBar */
+  left: var(--spacing-2xl);
+  background: var(--glass-background-strong);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  padding: var(--spacing-lg);
+  min-width: 200px;
+  z-index: 900; /* Lower than SearchBar (1000) */
+  transition: all var(--transition-base);
+}
+
+.layer-toggle-panel:hover {
+  box-shadow: var(--glass-shadow-strong);
+}
+
+/* ============================================
+   PANEL HEADER
+   ============================================ */
+.panel-header {
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.panel-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+  text-align: center;
+}
+
+/* ============================================
+   TOGGLE CONTROLS
+   ============================================ */
+.toggle-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.toggle-item {
+  position: relative;
+}
+
+/* ============================================
+   TOGGLE BUTTON STYLES
+   ============================================ */
+.toggle-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  position: relative;
+  overflow: hidden;
+}
+
+.toggle-button:hover:not(.disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.toggle-button:active:not(.disabled) {
+  transform: translateY(0);
+}
+
+.toggle-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   ACTIVE STATE
+   ============================================ */
+.toggle-button.active {
+  background: linear-gradient(135deg, var(--color-primary), #5a67d8);
+  color: white;
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.toggle-button.active:hover {
+  background: linear-gradient(135deg, #5a67d8, var(--color-primary));
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.toggle-button.active .layer-icon {
+  color: white;
+}
+
+/* ============================================
+   DISABLED STATE
+   ============================================ */
+.toggle-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.toggle-button.disabled:hover {
+  transform: none;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   TOGGLE CONTENT
+   ============================================ */
+.toggle-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.layer-icon {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-base);
+}
+
+.toggle-label {
+  font-weight: var(--font-medium);
+  user-select: none;
+}
+
+/* ============================================
+   STATUS INDICATORS
+   ============================================ */
+.status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.status-indicator.loading {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.status-indicator.available {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.status-indicator.unavailable {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+/* ============================================
+   LOADING SPINNER
+   ============================================ */
+.loading-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-top: 2px solid #3b82f6;
+  border-radius: var(--radius-full);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ============================================
+   FALLBACK FOR NO BACKDROP-FILTER
+   ============================================ */
+.no-backdrop-filter .layer-toggle-panel {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: none;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+  .layer-toggle-panel {
+    top: var(--spacing-lg);
+    left: var(--spacing-lg);
+    right: var(--spacing-lg);
+    min-width: auto;
+    padding: var(--spacing-md);
+  }
+
+  .panel-title {
+    font-size: var(--text-xs);
+  }
+
+  .toggle-button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--text-xs);
+  }
+
+  .layer-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .status-indicator {
+    width: 16px;
+    height: 16px;
+  }
+
+  .loading-spinner {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY IMPROVEMENTS
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .toggle-button,
+  .layer-toggle-panel,
+  .loading-spinner {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .toggle-button {
+    border: 2px solid;
+  }
+  
+  .toggle-button.active {
+    border: 2px solid var(--color-primary);
+  }
+}
+
+/* Focus indicators for keyboard navigation */
+@media (prefers-reduced-motion: no-preference) {
+  .toggle-button:focus-visible {
+    animation: focusPulse 2s infinite;
+  }
+}
+
+@keyframes focusPulse {
+  0%, 100% { outline-color: var(--color-primary); }
+  50% { outline-color: rgba(102, 126, 234, 0.5); }
+}

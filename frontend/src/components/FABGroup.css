@@ -1,0 +1,97 @@
+/* ============================================
+   FAB GROUP - FLOATING ACTION BUTTONS
+   ============================================ */
+.fab-group {
+  position: fixed;
+  bottom: var(--spacing-2xl);
+  right: var(--spacing-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  z-index: var(--z-controls);
+}
+
+/* ============================================
+   FAB BUTTON BASE STYLES
+   ============================================ */
+.fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--glass-background-strong);
+  backdrop-filter: var(--glass-blur);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  box-shadow: var(--glass-shadow);
+  transition: all var(--transition-base);
+  border: 1px solid var(--glass-border);
+}
+
+.fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  background: white;
+  color: var(--color-primary);
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.fab svg {
+  flex-shrink: 0;
+}
+
+/* ============================================
+   FALLBACK FOR NO BACKDROP-FILTER
+   ============================================ */
+.no-backdrop-filter .fab {
+  background: #FFFFFF;
+  backdrop-filter: none;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+  .fab-group {
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    gap: var(--spacing-sm);
+  }
+
+  .fab {
+    width: 40px;
+    height: 40px;
+  }
+
+  .fab svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY IMPROVEMENTS
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .fab {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .fab {
+    border: 2px solid;
+  }
+}

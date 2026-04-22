@@ -1,0 +1,320 @@
+/* ============================================
+   FIRE LAYER PANE CONFIGURATION
+   ============================================ */
+
+/* Custom pane for fire layer - ensures proper z-index ordering */
+.leaflet-fire-pane {
+  z-index: 450 !important; /* Between overlays (400) and marker shadows (500) */
+  pointer-events: auto;
+}
+
+/* Fire Marker Styles */
+.fire-marker {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.fire-marker svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.2s ease;
+}
+
+.fire-marker:hover svg {
+  transform: scale(1.1);
+}
+
+/* Fire intensity specific styles */
+.fire-low svg path {
+  animation: flicker-low 2s ease-in-out infinite alternate;
+}
+
+.fire-medium svg path {
+  animation: flicker-medium 1.5s ease-in-out infinite alternate;
+}
+
+.fire-high svg path {
+  animation: flicker-high 1s ease-in-out infinite alternate;
+}
+
+/* Flicker animations for different intensities */
+@keyframes flicker-low {
+  0% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+@keyframes flicker-medium {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.9; }
+}
+
+@keyframes flicker-high {
+  0% { opacity: 0.6; }
+  25% { opacity: 1; }
+  50% { opacity: 0.8; }
+  75% { opacity: 1; }
+  100% { opacity: 0.9; }
+}
+
+/* Fire Cluster Styles */
+.fire-cluster {
+  background: linear-gradient(135deg, #dc2626, #f97316);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.fire-cluster-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+}
+
+.fire-cluster-small {
+  width: 30px;
+  height: 30px;
+}
+
+.fire-cluster-small .fire-cluster-inner {
+  font-size: 10px;
+}
+
+.fire-cluster-medium {
+  width: 40px;
+  height: 40px;
+}
+
+.fire-cluster-medium .fire-cluster-inner {
+  font-size: 12px;
+}
+
+.fire-cluster-large {
+  width: 50px;
+  height: 50px;
+}
+
+.fire-cluster-large .fire-cluster-inner {
+  font-size: 14px;
+}
+
+/* Fire Popup Styles */
+.fire-popup {
+  min-width: 280px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.fire-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.fire-popup-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Loading and Error States */
+.loading-details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: #dc2626;
+  font-size: 13px;
+  text-align: center;
+}
+
+.intensity-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.intensity-badge.intensity-low {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fbbf24;
+}
+
+.intensity-badge.intensity-medium {
+  background-color: #fed7aa;
+  color: #c2410c;
+  border: 1px solid #f97316;
+}
+
+.intensity-badge.intensity-high {
+  background-color: #fecaca;
+  color: #b91c1c;
+  border: 1px solid #dc2626;
+}
+
+.fire-popup-content {
+  margin-bottom: 12px;
+}
+
+.fire-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.fire-detail:last-child {
+  margin-bottom: 0;
+}
+
+.fire-detail strong {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.fire-detail span {
+  font-size: 13px;
+  color: #1f2937;
+  text-align: right;
+  flex: 1;
+}
+
+.intensity-text.intensity-low {
+  color: #92400e;
+  font-weight: 500;
+}
+
+.intensity-text.intensity-medium {
+  color: #c2410c;
+  font-weight: 500;
+}
+
+.intensity-text.intensity-high {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.fire-popup-footer {
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.fire-popup-footer small {
+  color: #9ca3af;
+  font-size: 11px;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .fire-popup {
+    min-width: 240px;
+  }
+  
+  .fire-detail {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .fire-detail strong {
+    min-width: auto;
+  }
+  
+  .fire-detail span {
+    text-align: left;
+  }
+}
+
+/* Leaflet popup customization for fire popups */
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-tip {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Accessibility improvements */
+.fire-marker:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.fire-cluster:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .fire-marker svg path {
+    stroke-width: 2;
+  }
+  
+  .fire-cluster {
+    border-width: 3px;
+  }
+  
+  .intensity-badge {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .fire-marker svg,
+  .fire-low svg path,
+  .fire-medium svg path,
+  .fire-high svg path {
+    animation: none;
+  }
+  
+  .fire-marker:hover svg {
+    transform: none;
+  }
+}

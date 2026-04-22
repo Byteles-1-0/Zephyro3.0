@@ -1,207 +1,227 @@
-# AirQuality Italy - Monitoraggio Qualità dell'Aria
+# AQI_taly - Smart Air Quality Map for Italy 🇮🇹
 
-Applicazione Full Stack per il monitoraggio in tempo reale della qualità dell'aria in Italia (PM10 e PM2.5) utilizzando i dati ufficiali ISPRA/SINA.
+An intelligent air quality monitoring system for Italy that provides real-time pollution data, forecasting, and contextual environmental information.
 
-## 🏗️ Architettura
+## 🌟 Features
 
-- **Backend**: Flask (Python) - API proxy per dati ISPRA
-- **Frontend**: React + Leaflet - Mappa interattiva
-- **Fonte Dati**: ArcGIS REST Server (ISPRA/SINA)
+### Core Functionality
+- **Real-time Air Quality Monitoring**: Live PM10 and PM2.5 data from monitoring stations across Italy
+- **Interactive Map**: Leaflet-based map with intuitive visualization of pollution levels
+- **AI-Powered Forecasting**: Prophet-based time series forecasting for pollution predictions
+- **Contextual Layers**: 
+  - Active fires tracking (incendioggi.it integration)
+  - Industrial facilities mapping with pollution impact analysis
+  - BBOX spatial filtering for optimized performance
 
-## 🚀 Installazione e Avvio
+### Smart Features
+- **Pollution Source Analysis**: AI-driven identification of pollution sources for each monitoring station
+- **Smart Icon States**: Visual feedback showing which industries are contributing to pollution
+- **Debounced Map Updates**: Optimized API calls triggered only on map interaction (zoom/pan)
+- **Lazy Loading**: Efficient data loading for popups and details
 
-### Backend
+### Data Visualization
+- **Dual View Modes**: Switch between real-time data and forecast views
+- **Color-coded Stations**: Green (good), yellow (moderate), red (poor) air quality indicators
+- **Comprehensive Station Details**: Historical data, trends, and pollution analysis
+- **Forecast Timeline**: Interactive timeline for exploring future pollution predictions
+
+## 🏗️ Architecture
+
+### Backend (Python/Flask)
+- **Framework**: Flask with Flask-CORS and Flask-Caching
+- **Data Sources**:
+  - ARPA (Regional Environmental Protection Agencies)
+  - OpenWeatherMap API for air quality data
+  - incendioggi.it for fire tracking
+  - E-PRTR Database for industrial facilities
+- **Forecasting**: Facebook Prophet for time series prediction
+- **Caching**: 30-minute cache for optimal performance
+
+### Frontend (React)
+- **Framework**: React 18 with Hooks
+- **Mapping**: React-Leaflet for interactive maps
+- **State Management**: React Context and local state
+- **UI Components**: Custom floating UI with professional design
+- **Optimization**: Memoization and debouncing for smooth performance
+
+## 📦 Installation
+
+### Prerequisites
+- Python 3.8+
+- Node.js 14+
+- npm or yarn
+
+### Backend Setup
 
 ```bash
 cd backend
-python3 -m venv venv
-source venv/bin/activate  # Su Windows: venv\Scripts\activate
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Create .env file
+cp .env.example .env
+# Edit .env and add your OpenWeatherMap API key
+
+# Run the backend
 python app.py
 ```
 
-Il backend sarà disponibile su `http://localhost:5000`
+The backend will start on `http://localhost:5000`
 
-### Frontend
+### Frontend Setup
 
 ```bash
 cd frontend
+
+# Install dependencies
 npm install
+
+# Start development server
 npm start
 ```
 
-Il frontend sarà disponibile su `http://localhost:3000`
+The frontend will start on `http://localhost:3000`
 
-## 📡 API Endpoints
+## 🔧 Configuration
 
-### New Hybrid Architecture Endpoints
+### Backend Environment Variables
 
-#### `/api/map-base`
-Returns Layer 2 daily average data for all stations (~430 stations) in GeoJSON format.
+Create a `.env` file in the `backend` directory:
 
-**Parameters:**
-- `pollutant` (query): `pm10` or `pm25` (default: `pm10`)
-
-**Response Format:**
-```json
-{
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [12.4964, 41.9028]
-      },
-      "properties": {
-        "station_id": "IT1234",
-        "station_name": "Roma - Via Magna Grecia",
-        "value": 35.2,
-        "unit": "μg/m³",
-        "pollutant": "PM10",
-        "date": "2025-01-14T23:59:59Z",
-        "color": "yellow"
-      }
-    }
-  ]
-}
+```env
+OWM_API_KEY=your_openweathermap_api_key_here
+FLASK_ENV=development
+FLASK_DEBUG=True
 ```
 
-**Caching:** 24 hours (daily data updates once per day)
+### API Keys
 
-**Example:**
-```bash
-curl "http://localhost:5000/api/map-base?pollutant=pm10"
-```
+- **OpenWeatherMap API**: Get your free API key at [openweathermap.org](https://openweathermap.org/api)
 
-#### `/api/realtime-details`
-Returns Layer 3 hourly real-time data for active stations (~70 stations) as a dictionary.
+## 🚀 Usage
 
-**Parameters:**
-- `pollutant` (query): `pm10` or `pm25` (default: `pm10`)
+1. **Start the Backend**: Run `python app.py` in the backend directory
+2. **Start the Frontend**: Run `npm start` in the frontend directory
+3. **Open Browser**: Navigate to `http://localhost:3000`
+4. **Explore the Map**:
+   - Click on stations to view detailed information
+   - Toggle between PM10 and PM2.5 pollutants
+   - Switch between daily and hourly data
+   - Enable contextual layers (fires, industries)
+   - Switch to forecast mode to see predictions
 
-**Response Format:**
-```json
-{
-  "IT1234": {
-    "value": 38.5,
-    "unit": "μg/m³",
-    "timestamp": "2025-01-15T14:00:00Z"
-  },
-  "IT5678": {
-    "value": 22.1,
-    "unit": "μg/m³",
-    "timestamp": "2025-01-15T14:00:00Z"
-  }
-}
-```
+## 📊 API Endpoints
 
-**Caching:** 1 hour (hourly data updates with 2-3 hour delay)
+### Core Endpoints
+- `GET /api/map-base` - Base map data with all stations
+- `GET /api/realtime-details` - Real-time hourly data
+- `GET /api/forecast-maps` - Forecast data for map visualization
+- `GET /api/map-layers` - Contextual layers (fires, industries) with BBOX filtering
 
-**Example:**
-```bash
-curl "http://localhost:5000/api/realtime-details?pollutant=pm10"
-```
+### Station Details
+- `GET /api/station/<station_id>` - Detailed station information
+- `GET /api/pollution-analysis` - AI-powered pollution source analysis
 
-#### `/api/data/{pollutant_type}` (Legacy)
-Legacy endpoint maintained for backward compatibility. Redirects to `/api/map-base`.
+### Contextual Data
+- `GET /api/industry-details/<industry_id>` - Industrial facility details
+- `GET /api/fire-details/<fire_id>` - Fire incident details
 
-**Note:** This endpoint will be deprecated in a future version.
+## 🧪 Testing
 
-### Health Check
-
-- `GET /api/health` - Returns `{"status": "ok"}`
-
-## 🎨 Funzionalità
-
-- ✅ Visualizzazione mappa interattiva dell'Italia
-- ✅ **Architettura dati ibrida**: Layer 2 (medie giornaliere) + Layer 3 (dati orari)
-- ✅ **Selezione tipo dati**: Switch tra visualizzazione dati giornalieri (~430 stazioni) e dati orari (~70 stazioni attive)
-- ✅ **Caricamento ottimizzato**: Layer 2 carica prima per rendering immediato, Layer 3 in background
-- ✅ **Popup arricchiti**: Visualizzazione sia della media giornaliera che dell'ultimo rilevamento orario
-- ✅ Cerchi geografici con raggio reale in km (area di copertura stazione)
-- ✅ Dimensione cerchi proporzionale allo zoom (mantengono il raggio geografico)
-- ✅ Controllo dinamico del raggio di copertura (5-25 km)
-- ✅ Cerchi colorati per livelli di qualità (verde/giallo/rosso)
-- ✅ Switch tra PM10 e PM2.5
-- ✅ Caching differenziato (24h per dati giornalieri, 1h per dati orari)
-- ✅ Degradazione elegante quando dati orari non disponibili
-- ✅ Gestione errori e stati di caricamento
-
-## 🌈 Soglie Qualità dell'Aria
-
-### PM10
-- 🟢 Verde: ≤ 25 μg/m³ (Buona)
-- 🟡 Giallo: 26-50 μg/m³ (Moderata)
-- 🔴 Rosso: > 50 μg/m³ (Scarsa)
-
-### PM2.5
-- 🟢 Verde: ≤ 15 μg/m³ (Buona)
-- 🟡 Giallo: 16-25 μg/m³ (Moderata)
-- 🔴 Rosso: > 25 μg/m³ (Scarsa)
-
-## 📝 Note Tecniche
-
-### Raggio di Copertura delle Stazioni
-
-Il raggio predefinito di 10 km è basato su studi di rappresentatività spaziale delle stazioni di monitoraggio urbane/suburbane. Questo valore può essere regolato tramite lo slider nell'interfaccia (5-25 km) per visualizzare diverse aree di influenza.
-
-I cerchi sulla mappa utilizzano il componente `Circle` di Leaflet con raggio geografico reale in metri, quindi:
-- Mantengono le dimensioni proporzionali allo zoom
-- Rappresentano l'area geografica effettiva coperta dalla stazione
-- Permettono di visualizzare sovrapposizioni tra aree di copertura
-
-### Aggiornamento Dati
-
-I dati vengono aggiornati quotidianamente da ISPRA. Il backend implementa un sistema di caching per ridurre le chiamate API non necessarie.
-
-Per dettagli tecnici completi, consulta `specifica_tecnica_app_aria.md`.
-
-## 🚀 Deployment
-
-### Dipendenze Backend
-
-Assicurati di installare tutte le dipendenze, inclusa Flask-Caching:
-
+### Backend Tests
 ```bash
 cd backend
-pip install -r requirements.txt
+pytest
 ```
 
-**requirements.txt include:**
-- Flask==3.0.0
-- Flask-CORS==4.0.0
-- Flask-Caching==2.1.0
-- requests==2.31.0
-
-### Variabili d'Ambiente (Opzionali)
-
+### Frontend Tests
 ```bash
-# Backend (.env)
-FLASK_ENV=production
-CACHE_TYPE=SimpleCache
-CACHE_DEFAULT_TIMEOUT=3600
+cd frontend
+npm test
 ```
 
-### Caching Strategy
+## 🎨 Features in Detail
 
-- **Layer 2 (Base Map)**: Cache TTL di 24 ore (dati aggiornati una volta al giorno)
-- **Layer 3 (Real-Time)**: Cache TTL di 1 ora (dati aggiornati ogni ora con ritardo di 2-3 ore)
-- **Cache Type**: SimpleCache (in-memory) per deployment single-server
-- **Future Upgrade**: Redis per deployment multi-server
+### BBOX Spatial Filtering
+Optimizes map performance by filtering industries and fires based on the visible viewport:
+- Automatic BBOX calculation on map movement
+- 500ms debounce to prevent API spam
+- Server-side spatial filtering
+- Graceful degradation if filtering fails
 
-### Monitoraggio Raccomandato
+### Smart Icon States
+Visual feedback system for pollution sources:
+- **Neutral State**: 50% opacity, no border (non-pollution sources)
+- **Active State**: 100% opacity, red border with pulse animation (pollution sources)
+- Reactive updates based on pollution analysis
 
-Metriche chiave da monitorare:
-- **Cache hit rate**: Target > 95%
-- **ISPRA service response time**: Target < 2 secondi
-- **Frontend page load time**: Target < 3 secondi
-- **Error rate Layer 2**: Target < 0.1% (critico)
-- **Error rate Layer 3**: Target < 5% (non critico, degradazione elegante)
+### Pollution Source Analysis
+AI-driven analysis that identifies:
+- Industrial emissions
+- Traffic patterns
+- Fire incidents
+- Meteorological conditions
+- Provides actionable insights for each station
 
-### Performance Targets
+## 📁 Project Structure
 
-- **Initial Map Load**: < 3 secondi (Layer 2 fetch + render)
-- **Background Layer 3 Load**: < 1 secondo (non-blocking)
-- **Popup Enrichment**: < 500 millisecondi (O(1) lookup + render)
-- **Cached Response**: < 100 millisecondi (cache hit)
+```
+AQI_taly/
+├── backend/
+│   ├── app.py                 # Main Flask application
+│   ├── context/
+│   │   ├── industry_checker.py  # Industrial facilities logic
+│   │   └── fire_fetcher.py      # Fire tracking logic
+│   ├── requirements.txt       # Python dependencies
+│   └── .env                   # Environment variables
+├── frontend/
+│   ├── src/
+│   │   ├── App.js            # Main React component
+│   │   ├── components/       # React components
+│   │   ├── hooks/            # Custom React hooks
+│   │   └── index.js          # Entry point
+│   ├── package.json          # Node dependencies
+│   └── public/               # Static assets
+├── AnalisiGeodatabase/       # GeoDatabase analysis tools
+└── README.md                 # This file
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- **Data Sources**:
+  - ARPA (Regional Environmental Protection Agencies)
+  - OpenWeatherMap
+  - incendioggi.it
+  - E-PRTR Database
+- **Libraries**:
+  - Flask & React ecosystems
+  - Facebook Prophet for forecasting
+  - Leaflet for mapping
+  - Hypothesis for property-based testing
+
+## 📧 Contact
+
+For questions or feedback, please open an issue on GitHub.
+
+---
+
+Made with ❤️ for cleaner air in Italy

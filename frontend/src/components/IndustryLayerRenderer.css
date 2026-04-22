@@ -1,0 +1,422 @@
+/* ============================================
+   INDUSTRY LAYER PANE CONFIGURATION
+   ============================================ */
+
+/* Custom pane for industry layer - ensures proper z-index ordering */
+.leaflet-industry-pane {
+  z-index: 460 !important; /* Between overlays (400) and marker shadows (500) */
+  pointer-events: auto;
+}
+
+/* Industry Marker Styles */
+.industry-marker {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.industry-marker svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.2s ease;
+}
+
+.industry-marker:hover svg {
+  transform: scale(1.1);
+}
+
+/* ============================================
+   SMART ICON STATES
+   Requirements: 8.1, 8.2, 8.3, 8.4, 9.1, 9.2, 9.3, 9.4
+   ============================================ */
+
+/* Neutral State: 50% opacity, no border, no animation */
+.industry-neutral {
+  opacity: 0.5;
+}
+
+/* Active State: 100% opacity, red border, pulse animation */
+.industry-active {
+  opacity: 1;
+}
+
+.industry-active > div {
+  border: 3px solid #dc2626 !important;
+  border-radius: 4px;
+  animation: pulse 2s infinite;
+}
+
+/* Pulse Animation for Active State (2-second duration) */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 8px rgba(220, 38, 38, 0);
+  }
+}
+
+/* Sector-specific animations */
+.industry-energy svg g {
+  animation: energy-pulse 2s ease-in-out infinite alternate;
+}
+
+.industry-manufacturing svg g {
+  animation: manufacturing-hum 3s ease-in-out infinite;
+}
+
+.industry-chemical svg g {
+  animation: chemical-glow 2.5s ease-in-out infinite alternate;
+}
+
+.industry-mining svg g {
+  animation: mining-vibrate 1.5s ease-in-out infinite;
+}
+
+.industry-other svg g {
+  animation: none;
+}
+
+/* Sector-specific animations */
+@keyframes energy-pulse {
+  0% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+@keyframes manufacturing-hum {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+
+@keyframes chemical-glow {
+  0% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+@keyframes mining-vibrate {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-0.5px); }
+  75% { transform: translateX(0.5px); }
+}
+
+/* Industry Popup Styles */
+.industry-popup {
+  min-width: 300px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.industry-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.industry-popup-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Loading and Error States */
+.loading-details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: #dc2626;
+  font-size: 13px;
+  text-align: center;
+}
+
+.sector-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sector-badge.sector-energy {
+  background-color: #fecaca;
+  color: #b91c1c;
+  border: 1px solid #dc2626;
+}
+
+.sector-badge.sector-manufacturing {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #2563eb;
+}
+
+.sector-badge.sector-chemical {
+  background-color: #e9d5ff;
+  color: #6b21a8;
+  border: 1px solid #7c3aed;
+}
+
+.sector-badge.sector-mining {
+  background-color: #fed7aa;
+  color: #c2410c;
+  border: 1px solid #ea580c;
+}
+
+.sector-badge.sector-other {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #6b7280;
+}
+
+.industry-popup-content {
+  margin-bottom: 12px;
+}
+
+.industry-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.industry-detail:last-child {
+  margin-bottom: 0;
+}
+
+.industry-detail strong {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.industry-detail span {
+  font-size: 13px;
+  color: #1f2937;
+  text-align: right;
+  flex: 1;
+}
+
+.sector-text.sector-energy {
+  color: #b91c1c;
+  font-weight: 500;
+}
+
+.sector-text.sector-manufacturing {
+  color: #1d4ed8;
+  font-weight: 500;
+}
+
+.sector-text.sector-chemical {
+  color: #6b21a8;
+  font-weight: 500;
+}
+
+.sector-text.sector-mining {
+  color: #c2410c;
+  font-weight: 500;
+}
+
+.sector-text.sector-other {
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Pollutants section */
+.industry-pollutants {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.industry-pollutants strong {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.pollutants-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.pollutant-tag {
+  background-color: #f3f4f6;
+  color: #374151;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 500;
+  border: 1px solid #d1d5db;
+}
+
+.pollutant-tag.more {
+  background-color: #e5e7eb;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.industry-popup-footer {
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.industry-popup-footer small {
+  color: #9ca3af;
+  font-size: 11px;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .industry-popup {
+    min-width: 260px;
+  }
+  
+  .industry-detail {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .industry-detail strong {
+    min-width: auto;
+  }
+  
+  .industry-detail span {
+    text-align: left;
+  }
+  
+  .pollutants-list {
+    justify-content: flex-start;
+  }
+}
+
+/* Leaflet popup customization for industry popups */
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-tip {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Accessibility improvements */
+.industry-marker:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .industry-marker svg g {
+    stroke-width: 2;
+  }
+  
+  .sector-badge {
+    border-width: 2px;
+  }
+  
+  .pollutant-tag {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .industry-marker svg,
+  .industry-energy svg g,
+  .industry-manufacturing svg g,
+  .industry-chemical svg g,
+  .industry-mining svg g {
+    animation: none;
+  }
+  
+  .industry-marker:hover svg {
+    transform: none;
+  }
+}
+
+/* Smoke animation for factory chimneys */
+.industry-marker svg circle {
+  animation: smoke-rise 3s ease-in-out infinite;
+}
+
+@keyframes smoke-rise {
+  0% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.3;
+    transform: translateY(-2px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* Disable smoke animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .industry-marker svg circle {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+
+/* Sector-specific hover effects */
+.industry-energy:hover svg g {
+  filter: brightness(1.1);
+}
+
+.industry-manufacturing:hover svg g {
+  filter: brightness(1.1) saturate(1.2);
+}
+
+.industry-chemical:hover svg g {
+  filter: brightness(1.1) hue-rotate(10deg);
+}
+
+.industry-mining:hover svg g {
+  filter: brightness(1.1) contrast(1.1);
+}
+
+.industry-other:hover svg g {
+  filter: brightness(1.1);
+}

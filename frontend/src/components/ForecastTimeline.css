@@ -1,0 +1,216 @@
+.forecast-timeline {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  max-width: 900px;
+  min-width: 600px;
+  z-index: 1001;
+  
+  /* Glassmorphism styling */
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 20px;
+  box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.1);
+  
+  padding: 16px 24px;
+  
+  /* Prevent text selection */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.forecast-timeline-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.current-time {
+  flex-shrink: 0;
+  min-width: 140px;
+}
+
+.time-value {
+  font-weight: 600;
+  font-family: var(--font-family);
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.forecast-slider {
+  flex: 1;
+  margin: 0;
+  height: 8px;
+  border-radius: 4px;
+  outline: none;
+  -webkit-appearance: none;
+  background: linear-gradient(to right, #94a3b8 0%, #94a3b8 var(--value), #e2e8f0 var(--value), #e2e8f0 100%);
+  cursor: pointer;
+}
+
+.forecast-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transition: all 0.2s ease;
+}
+
+.forecast-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.forecast-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transition: all 0.2s ease;
+}
+
+.forecast-slider::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.control-btn-play {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--primary-color);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--primary-color);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  font-family: var(--font-family);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-btn-play:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+.control-btn-play.playing {
+  background: var(--warning-color);
+  border-color: var(--warning-color);
+  color: white;
+}
+
+.control-btn-play.playing:hover {
+  background: #d97706;
+  border-color: #d97706;
+}
+
+/* Fallback for browsers without backdrop-filter support */
+.no-backdrop-filter .forecast-timeline {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.no-backdrop-filter .control-btn-play {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .forecast-timeline {
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    transform: none;
+    min-width: auto;
+    max-width: none;
+    padding: 12px 16px;
+  }
+
+  .forecast-timeline-content {
+    gap: 12px;
+  }
+
+  .current-time {
+    min-width: 100px;
+  }
+
+  .time-value {
+    font-size: 13px;
+  }
+
+  .forecast-slider {
+    margin: 0;
+  }
+
+  .control-btn-play {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}
+
+/* Extra small screens - stack vertically */
+@media (max-width: 480px) {
+  .forecast-timeline {
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    padding: 10px 12px;
+  }
+  
+  .forecast-timeline-content {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .current-time {
+    min-width: auto;
+    text-align: center;
+  }
+  
+  .forecast-slider {
+    margin: 0;
+    order: 2;
+  }
+  
+  .control-btn-play {
+    order: 3;
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
+/* Animation for showing/hiding */
+.forecast-timeline {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

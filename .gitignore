@@ -11,6 +11,12 @@ backend/*.egg-info/
 backend/dist/
 backend/build/
 
+# Database
+backend/*.db
+backend/*.db-journal
+backend/*.db-wal
+backend/*.db-shm
+
 # Node
 frontend/node_modules/
 frontend/build/
@@ -32,3 +38,24 @@ frontend/yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# Testing
+.hypothesis/
+backend/.hypothesis/
+.pytest_cache/
+backend/.pytest_cache/
+*.coverage
+.coverage
+htmlcov/
+
+# Kiro AI Assistant
+.kiro/
+
+# Environment files
+.env
+backend/.env
+frontend/.env
+
+# Large data files (GeoDatabase files exceed GitHub size limits)
+AnalisiGeodatabase/
+dati_storici/
