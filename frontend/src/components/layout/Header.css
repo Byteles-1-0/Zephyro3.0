@@ -1,0 +1,61 @@
+.zephyro-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--header-bg);
+  color: var(--header-text);
+  box-shadow: 0 2px 10px var(--shadow-color);
+  backdrop-filter: blur(8px);
+  position: relative;
+  z-index: 1000;
+  height: 70px; /* Explicit height to match App layout calc */
+}
+
+#logo { 
+  height: 48px; 
+  width: auto; 
+  margin-right: 16px; 
+}
+
+.project-name {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #222;
+  letter-spacing: 0.02em;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  flex-grow: 1;
+}
+
+body.dark-mode .project-name { color: #fff; }
+
+#nasa-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--header-text);
+}
+
+#nasa-logo { height: 32px; width: auto; }
+
+/* Dark mode toggle: circular */
+#dark-mode-toggle {
+  background: var(--bg-color);
+  border: none;
+  color: var(--text-color);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin-left: 16px;
+}
+
+#dark-mode-toggle:hover { filter: brightness(0.95); }

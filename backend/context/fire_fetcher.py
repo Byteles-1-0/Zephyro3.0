@@ -70,6 +70,33 @@ def _categorize_fire_intensity(fire_data):
         # If we can't parse the data, default to medium
         return 'medium'
 
+def is_point_in_italy(lat, lon, country_code=None):
+    """
+    Check if a coordinate is likely in Italian territory.
+    Uses countryCode if available, falls back to a multi-bbox check.
+    """
+    if country_code:
+        return country_code.lower() == 'it'
+    
+    # Mainland Italy + Islands BBOX approximation
+    # General BBOX
+    if not (35.4 <= lat <= 47.1 and 6.6 <= lon <= 18.6):
+        return False
+        
+    # Refine North-East corner (exclude Slovenia/Croatia)
+    # If North of 45.4, longitude should be less than 13.8 (Trieste area)
+    if lat > 45.4 and lon > 13.8:
+        # Check specifically for Trieste/Gorizia tip if needed, 
+        # but 13.8 is a safe cut-off for most foreign detections
+        return False
+        
+    # Refine East coast (exclude Croatia across the Adriatic)
+    # If between 42.0 and 45.4 N, longitude should be less than 15.0
+    if 42.0 <= lat <= 45.4 and lon > 15.0:
+        return False
+        
+    return True
+
 def get_all_active_fires(bbox=None):
     """
     Retrieve all active fires in Italy from incendioggi.it API with comprehensive error handling
@@ -138,6 +165,33 @@ def get_all_active_fires(bbox=None):
             try:
                 standardized_fire = standardize_fire_data(fire, i)
                 if standardized_fire:
+                    # Filter: medium or high intensity (User: "before there were more")
+                    if standardized_fire.get('intensity') not in ['medium', 'high']:
+                        continue
+                        
+                    # Filter: only Italian territory (Robust check)
+                    if not is_point_in_italy(
+                        standardized_fire.get('latitude', 0),
+                        standardized_fire.get('longitude', 0),
+                        standardized_fire.get('country_code')
+                    ):
+                        continue
+                        
+                    # Filter: last 24 hours (Match API window)
+                    timestamp_str = standardized_fire.get('timestamp')
+                    if timestamp_str:
+                        try:
+                            # Remove 'Z' for strptime if present
+                            clean_time_str = timestamp_str.replace('Z', '')
+                            fire_time = datetime.strptime(clean_time_str, "%Y-%m-%dT%H:%M:%S")
+                            time_diff = datetime.utcnow() - fire_time
+                            # If older than 24 hours (24 * 3600 seconds)
+                            if time_diff.total_seconds() > 24 * 3600:
+                                continue
+                        except ValueError:
+                            # If parsing fails, we might just skip it to enforce the rule strictly
+                            pass
+                            
                     standardized_fires.append(standardized_fire)
                 else:
                     processing_errors += 1
@@ -253,13 +307,23 @@ def standardize_fire_data(raw_fire_data, index=0):
                 # No acquisition data available, use current time
                 timestamp = datetime.utcnow().isoformat() + 'Z'
         
+        # Extract country info if available (nested in location object)
+        country_code = None
+        country_name = None
+        raw_location = raw_fire_data.get('location')
+        if isinstance(raw_location, dict):
+            country_code = raw_location.get('countryCode', '').lower()
+            country_name = raw_location.get('country', '')
+        
         return {
             'id': str(fire_id),
             'latitude': fire_lat,
             'longitude': fire_lon,
             'intensity': intensity,
             'location': location,
-            'timestamp': timestamp
+            'timestamp': timestamp,
+            'country_code': country_code,
+            'country': country_name
         }
         
     except (ValueError, TypeError, KeyError) as e:
@@ -435,6 +499,24 @@ def check_nearby_fires(station_lat, station_lon, radius_km=50):
                     location = fire.get('location', fire.get('name', 'Località non specificata'))
                 else:
                     # Skip non-dict fire objects
+                    continue
+                
+                # Calculate intensity
+                intensity = _categorize_fire_intensity(fire)
+                if intensity != 'high':
+                    continue
+                    
+                # Calculate intensity
+                intensity = _categorize_fire_intensity(fire)
+                if intensity not in ['medium', 'high']:
+                    continue
+                    
+                # Filter: only Italian territory (Robust check)
+                cc = None
+                if isinstance(fire.get('location'), dict):
+                    cc = fire['location'].get('countryCode')
+                
+                if not is_point_in_italy(fire_lat, fire_lon, cc):
                     continue
                 
                 # Calculate distance

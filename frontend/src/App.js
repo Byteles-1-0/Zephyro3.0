@@ -14,8 +14,39 @@ import FireLayerRenderer from './components/FireLayerRenderer';
 import IndustryLayerRenderer from './components/IndustryLayerRenderer';
 import useMapBounds from './hooks/useMapBounds';
 import useDebouncedCallback from './hooks/useDebouncedCallback';
+import Header from './components/layout/Header';
+import TopCitiesWidget from './components/TopCitiesWidget';
+import ChatWidget from './components/ChatWidget';
 
 const API_BASE_URL = 'http://localhost:5000/api';
+
+// Map bounds tracker utility component
+// Must be used inside MapContainer
+const MapBoundsTracker = ({ onBoundsChange }) => {
+  const bbox = useMapBounds();
+  
+  useEffect(() => {
+    if (bbox) {
+      try {
+        // Validate BBOX before using it
+        const { ne_lat, ne_lon, sw_lat, sw_lon } = bbox;
+        if (typeof ne_lat === 'number' && typeof ne_lon === 'number' &&
+            typeof sw_lat === 'number' && typeof sw_lon === 'number' &&
+            !isNaN(ne_lat) && !isNaN(ne_lon) && !isNaN(sw_lat) && !isNaN(sw_lon)) {
+          onBoundsChange(bbox);
+        } else {
+          console.warn('Invalid BBOX extracted from map bounds, using unfiltered request');
+          onBoundsChange(null);
+        }
+      } catch (error) {
+        console.warn('Error processing map bounds, using unfiltered request:', error);
+        onBoundsChange(null);
+      }
+    }
+  }, [bbox, onBoundsChange]);
+  
+  return null;
+};
 
 function App() {
   // Existing state
@@ -27,6 +58,9 @@ function App() {
   const [error, setError] = useState(null);
   const radiusKm = 10; // Fixed radius at 10km
   
+  // Theme state
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   // View mode: 'realtime' or 'forecast'
   const [viewMode, setViewMode] = useState('realtime');
   
@@ -55,34 +89,7 @@ function App() {
     []
   );
 
-  // Map bounds tracker component
-  // Requirements: 5.4, 6.3, 7.1
-  const MapBoundsTracker = () => {
-    const bbox = useMapBounds();
-    
-    useEffect(() => {
-      if (bbox) {
-        try {
-          // Validate BBOX before using it
-          const { ne_lat, ne_lon, sw_lat, sw_lon } = bbox;
-          if (typeof ne_lat === 'number' && typeof ne_lon === 'number' &&
-              typeof sw_lat === 'number' && typeof sw_lon === 'number' &&
-              !isNaN(ne_lat) && !isNaN(ne_lon) && !isNaN(sw_lat) && !isNaN(sw_lon)) {
-            debouncedFetchLayerData(bbox);
-          } else {
-            console.warn('Invalid BBOX extracted from map bounds, using unfiltered request');
-            debouncedFetchLayerData(null);
-          }
-        } catch (error) {
-          // Requirements: 13.2 - Handle BBOX extraction failures
-          console.warn('Error processing map bounds, using unfiltered request:', error);
-          debouncedFetchLayerData(null);
-        }
-      }
-    }, [bbox]);
-    
-    return null; // This is a utility component
-  };
+
 
   // Layer toggle state with persistence
   const [fireLayerEnabled, setFireLayerEnabled] = useState(() => {
@@ -368,6 +375,8 @@ function App() {
 
   return (
     <div className="App">
+      <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+      
       {/* Loading & Error Messages */}
       {loading && <div className="loading">Caricamento dati...</div>}
       {error && (
@@ -391,7 +400,7 @@ function App() {
           ref={mapRef}
           center={[42.5, 12.5]} 
           zoom={6} 
-          style={{ height: '100vh', width: '100vw' }}
+          style={{ height: 'calc(100vh - 70px)', width: '100vw' }}
           zoomControl={false}
         >
           <TileLayer
@@ -400,24 +409,35 @@ function App() {
           />
           
           {/* Map bounds tracker for BBOX API calls */}
-          <MapBoundsTracker />
+          <MapBoundsTracker onBoundsChange={debouncedFetchLayerData} />
           
-          {baseMapData.features.map((feature, idx) => {
+          {baseMapData.features
+            .map(feature => {
+              const props = feature.properties;
+              const hasRealtimeData = realtimeData[props.station_id];
+              const hasBaseData = props.value !== null && props.value !== undefined;
+              
+              let displayColor = props.color;
+              if (dataSource === 'hourly' && !hasRealtimeData) {
+                displayColor = 'gray';
+              } else if (dataSource === 'daily' && !hasBaseData) {
+                displayColor = 'gray';
+              }
+              
+              return { ...feature, displayColor };
+            })
+            .sort((a, b) => {
+              const order = { gray: 0, green: 1, yellow: 2, red: 3 };
+              const priorityA = order[a.displayColor] || 0;
+              const priorityB = order[b.displayColor] || 0;
+              return priorityA - priorityB;
+            })
+            .map((feature, idx) => {
             const [lng, lat] = feature.geometry.coordinates;
             const props = feature.properties;
             const radiusMeters = radiusKm * 1000;
-            
-            // Determine if station has data
-            const hasRealtimeData = realtimeData[props.station_id];
-            const hasBaseData = props.value !== null && props.value !== undefined;
-            
-            // Determine color: gray if no data, otherwise use the color from API
-            let displayColor = props.color;
-            if (dataSource === 'hourly' && !hasRealtimeData) {
-              displayColor = 'gray';
-            } else if (dataSource === 'daily' && !hasBaseData) {
-              displayColor = 'gray';
-            }
+            const displayColor = feature.displayColor;
+            const hasRealtimeData = !!realtimeData[props.station_id];
             
             // Check if station should be visible based on search
             const visible = isStationVisible(props.station_id);
@@ -532,7 +552,7 @@ function App() {
           ref={mapRef}
           center={[42.5, 12.5]} 
           zoom={6} 
-          style={{ height: '100vh', width: '100vw' }}
+          style={{ height: 'calc(100vh - 70px)', width: '100vw' }}
           zoomControl={false}
         >
           <TileLayer
@@ -541,7 +561,7 @@ function App() {
           />
           
           {/* Map bounds tracker for BBOX API calls */}
-          <MapBoundsTracker />
+          <MapBoundsTracker onBoundsChange={debouncedFetchLayerData} />
           
           {/* Forecast map overlay */}
           <ForecastMapOverlay
@@ -565,7 +585,42 @@ function App() {
       )}
 
       {/* TODO: Floating UI Components will be added here as siblings of MapContainer */}
-      {/* SearchBar (top-left) */}
+      
+      <div id="widgets">
+        {/* ViewModeToggle */}
+        <ViewModeToggle
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+        />
+        
+        {/* FABGroup */}
+        <FABGroup
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          onRecenter={handleRecenter}
+          fireLayerEnabled={fireLayerEnabled}
+          industryLayerEnabled={industryLayerEnabled}
+          onFireToggle={handleFireToggle}
+          onIndustryToggle={handleIndustryToggle}
+          layerDataStatus={layerDataStatus}
+          viewMode={viewMode}
+        />
+        
+        {/* Top 5 Worst Cities */}
+        <TopCitiesWidget
+          baseMapData={baseMapData}
+          realtimeData={realtimeData}
+          dataSource={dataSource}
+          viewMode={viewMode}
+          mapRef={mapRef}
+          pollutantType={pollutantType}
+        />
+
+        {/* Legend */}
+        <Legend viewMode={viewMode} />
+      </div>
+
+      {/* SearchBar */}
       <SearchBar
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
@@ -576,27 +631,9 @@ function App() {
         viewMode={viewMode}
       />
       
-      {/* ViewModeToggle (top-right) */}
-      <ViewModeToggle
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-      />
-      
-      {/* FABGroup (bottom-right) */}
-      <FABGroup
-        onZoomIn={handleZoomIn}
-        onZoomOut={handleZoomOut}
-        onRecenter={handleRecenter}
-        fireLayerEnabled={fireLayerEnabled}
-        industryLayerEnabled={industryLayerEnabled}
-        onFireToggle={handleFireToggle}
-        onIndustryToggle={handleIndustryToggle}
-        layerDataStatus={layerDataStatus}
-      />
-      
-      {/* Legend (bottom-left) */}
-      <Legend viewMode={viewMode} />
-      
+      {/* AI Chat Widget */}
+      <ChatWidget mapRef={mapRef} />
+
       {/* SideDrawer (right edge) */}
       <SideDrawer
         isOpen={sideDrawerOpen}

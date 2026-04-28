@@ -11,7 +11,7 @@
   backdrop-filter: var(--glass-blur-strong);
   border-left: 1px solid var(--glass-border);
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
-  z-index: var(--z-drawer);
+  z-index: 9999;
   transform: translateX(100%);
   transition: transform var(--transition-base);
   overflow: hidden;
